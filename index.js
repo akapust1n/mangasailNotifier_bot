@@ -11,7 +11,7 @@ const fs = require('fs');
 //---------------------------------------
 
 //global vars
-const token = fs.readFileSync('token', 'utf8');
+const token = fs.readFileSync('token', 'utf8').split("\n")[0];
 const telegramId = fs.readFileSync('telegramId', 'utf8');
 //slow access
 let chapterStore =
@@ -24,7 +24,7 @@ let chapterStore =
 }
 
 //bot -----------------
-const bot = new Telegraf(token)
+const bot = new Telegraf(token);
 
 bot.start((ctx) => ctx.reply('Welcome!'))
 bot.hears('hi', (ctx) => { ctx.reply(chapterStore); })
@@ -50,12 +50,10 @@ function extractChapter(manga, htmlPage) {
         return;
     }
     const oldChapter = chapterStore[manga];
-    if (oldChapter > 0 && oldChapter != cleanText) {
+    if (oldChapter.length > 0 && oldChapter != cleanText) {
         bot.telegram.sendMessage(telegramId, cleanText);
     }
-    else {
-        chapterStore[manga] = cleanText;
-    }
+    chapterStore[manga] = cleanText;
 }
 
 
@@ -64,7 +62,7 @@ function poll() {
         const extractChapterBinded = extractChapter.bind(null, key);
         cloudscraper.get(key).then(extractChapterBinded, console.error);
     }
-    setTimeout(poll, 5000);
+    setTimeout(poll, 15 * 60 * 1000);
 }
 
 poll();
