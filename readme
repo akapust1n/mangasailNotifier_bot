@@ -1,3 +1,5 @@
+Telegram bot for notifying about new manga chapters from mangasail.co site
+
 docker build -t akapust1n/mangasailbot .
 docker run -d akapust1n/mangasailbot:latest
 
